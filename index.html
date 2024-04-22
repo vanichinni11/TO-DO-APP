@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO-DO App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        li .task {
+            flex: 1;
+        }
+
+        li button {
+            margin-left: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        button.edit {
+            background-color: #2196f3;
+        }
+
+        button#previous-task {
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TO-DO List</h1>
+        <form id="todo-form">
+            <input type="text" id="task-input" placeholder="Add new task...">
+            <button type="submit">Add Task</button>
+        </form>
+        <ul id="task-list">
+            <!-- Tasks will be added dynamically here -->
+        </ul>
+       
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('todo-form');
+            const input = document.getElementById('task-input');
+            const taskList = document.getElementById('task-list');
+            const previousTaskButton = document.getElementById('previous-task');
+
+            let tasks = [];
+            let currentIndex = -1;
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const taskText = input.value.trim();
+                if (taskText !== '') {
+                    addTask(taskText);
+                    input.value = '';
+                }
+            });
+
+            taskList.addEventListener('click', function(event) {
+                if (event.target.tagName === 'BUTTON') {
+                    const li = event.target.parentElement;
+                    const index = Array.from(li.parentNode.children).indexOf(li);
+                    if (event.target.classList.contains('delete')) {
+                        deleteTask(index);
+                    } else if (event.target.classList.contains('edit')) {
+                        editTask(index);
+                    }
+                }
+            });
+
+            previousTaskButton.addEventListener('click', function() {
+                displayAllTasks();
+            });
+
+            function addTask(taskText) {
+                tasks.push(taskText);
+                currentIndex = tasks.length - 1;
+                displayAllTasks();
+            }
+
+            function deleteTask(index) {
+                tasks.splice(index, 1);
+                displayAllTasks();
+            }
+
+            function editTask(index) {
+                const newText = prompt("Edit Task", tasks[index]);
+                if (newText !== null && newText !== '') {
+                    tasks[index] = newText;
+                    displayAllTasks();
+                }
+            }
+
+            function displayAllTasks() {
+                taskList.innerHTML = '';
+                tasks.forEach((taskText, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="task">${taskText}</span>
+                        <button class="delete" onclick="deleteTask(${index})">-</button>
+                        <button class="edit" onclick="editTask(${index})">✎</button>
+                    `;
+                    taskList.appendChild(li);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
